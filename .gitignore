@@ -1,0 +1,8 @@
+/.vs/*
+!/.vs/launch.vs.json
+
+/out/
+
+/bin/main.exe
+/bin/main.ilk
+/bin/main.pdb
