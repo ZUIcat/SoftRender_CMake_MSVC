@@ -66,15 +66,28 @@ class Matrix {
     // 减法
     static void sub(Matrix &m, const Matrix &m1, const Matrix &m2);
     // 矩阵 * 矩阵
-    static void mul(Matrix &m, const Matrix &m1, const Matrix &m2);
+    static void mul_mm(Matrix &m, const Matrix &m1, const Matrix &m2);
     // 矩阵 * 标量
-    static void scale(Matrix &m, const Matrix &m1, const float t);
+    static void mul_ms(Matrix &m, const Matrix &m1, const float t);
     // 矩阵 * 向量
-    static void apply(Matrix &m, const Matrix &m1, const Vector &v1);
+    static void mul_mv(Vector &v, const Matrix &m1, const Vector &v1);
     // 设置为单位矩阵
     static void set_identity(Matrix &m);
     // 设置为零矩阵
     static void set_zero(Matrix &m);
+
+    // 获取变换矩阵 平移
+    static void transform_translate(Matrix &m, const float x, const float y, const float z);
+    // 获取变换矩阵 旋转
+    static void transform_rotate(Matrix &m, const float x, const float y, const float z, const float angle);
+    // 获取变换矩阵 缩放
+    static void transform_scale(Matrix &m, const float x, const float y, const float z);
+    // 获取变换矩阵 摄像机
+    static void transform_lookat(Matrix &m, const Vector &eye, const Vector &at, const Vector &up);
+    // 获取变换矩阵 正交投影
+    static void transform_orthographic(Matrix &m, const float left, const float right, const float bottom, const float top, const float near, const float far);
+    // 获取变换矩阵 透视投影
+    static void transform_perspective(Matrix &m, const float left, const float right, const float bottom, const float top, const float near, const float far);
 
   public:
     float m[4][4]; // 列主序
