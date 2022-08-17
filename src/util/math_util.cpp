@@ -2,11 +2,11 @@
 
 #include "math_util.h"
 
-int CMID(const int x, const int min, const int max) {
+int Math::clamp(const int x, const int min, const int max) {
     return (x < min) ? min : ((x > max) ? max : x);
 }
 
-int interpolate(const float x1, const float x2, const float t) {
+float Math::mix(const float x1, const float x2, const float t) {
     return x1 + (x2 - x1) * t;
 }
 
@@ -46,21 +46,41 @@ void Vector::cross(Vector &v, const Vector &v1, const Vector &v2) {
 }
 
 void Vector::interpolate(Vector &v, const Vector &v1, const Vector &v2, float t) {
-    v.x = ::interpolate(v1.x, v2.x, t);
-    v.y = ::interpolate(v1.y, v2.y, t);
-    v.z = ::interpolate(v1.z, v2.z, t);
+    v.x = Math::mix(v1.x, v2.x, t);
+    v.y = Math::mix(v1.y, v2.y, t);
+    v.z = Math::mix(v1.z, v2.z, t);
     v.w = 1.0f;
 }
 
 void Vector::normalize(Vector &v) {
     float length = Vector::length(v);
     if (length != 0.0f) {
-        float inv = 1.0f / length; // TODO 这样有什么用意吗
+        float inv = 1.0f / length;
         v.x *= inv;
         v.y *= inv;
         v.z *= inv;
     }
     v.w = 1.0f;
+}
+
+uint8_t Vector::check_in_cvv(const Vector &v) {
+    uint8_t check = 0;
+    float w = v.w; // TODO 为什么 z 在开头，w == 0 怎么办
+    if (v.z < -w) check |= 0b00000001;
+    if (v.z >  w) check |= 0b00000010;
+    if (v.x < -w) check |= 0b00000100;
+    if (v.x >  w) check |= 0b00001000;
+    if (v.y < -w) check |= 0b00010000;
+    if (v.y >  w) check |= 0b00100000;
+    return check;
+}
+
+void Vector::ndc_to_screen(Vector &v_new, const Vector &v_old, const float width, const float height) {
+    float rhw = 1.0f / v_old.w;
+    v_new.x = ( v_old.x * rhw + 1.0f) * width  * 0.5f;
+    v_new.y = (-v_old.y * rhw + 1.0f) * height * 0.5f;
+    v_new.z = v_old.z * rhw;
+    v_new.w = 1.0f;
 }
 
 Point::Point() : Point(0.0f, 0.0f, 0.0f, 1.0f) {}
@@ -216,10 +236,30 @@ void Matrix::transform_lookat(Matrix &m, const Vector &eye, const Vector &at, co
 
     m.m[3][0] = -Vector::dot(eye, s);
     m.m[3][1] = -Vector::dot(eye, u);
-    m.m[3][2] = Vector::dot(eye, f);
+    m.m[3][2] =  Vector::dot(eye, f);
     m.m[3][3] = 1.0f;
 }
 
-void Matrix::transform_orthographic(Matrix &m, const float left, const float right, const float bottom, const float top, const float, const float) {}
+void Matrix::transform_orthographic(Matrix &m, const float left, const float right, const float bottom, const float top, const float near, const float far) {
+    Matrix::set_identity(m);
+    m.m[0][0] = 2.0f / (right - left);
+    m.m[1][1] = 2.0f / (top - bottom);
+    m.m[2][2] = 2.0f / (near - far);
 
-void Matrix::transform_perspective(Matrix &m, const float left, const float right, const float bottom, const float top, const float, const float) {}
+    m.m[3][0] = (left + right) / (left - right);
+    m.m[3][1] = (bottom + top) / (bottom - top);
+    m.m[3][2] = (near + far)   / (near - far);
+}
+
+void Matrix::transform_perspective(Matrix &m, const float left, const float right, const float bottom, const float top, const float near, const float far) {
+    Matrix::set_zero(m);
+    m.m[0][0] = 2.0f * near / (right - left);
+    m.m[1][1] = 2.0f * near / (top - bottom);
+
+    m.m[2][0] = (right + left) / (right - left);
+    m.m[2][1] = (top + bottom) / (top - bottom);
+    m.m[2][2] = (near + far)   / (near - far);
+    m.m[2][3] = -1.0f;
+
+    m.m[3][2] = 2.0f * near * far / (near - far);
+}

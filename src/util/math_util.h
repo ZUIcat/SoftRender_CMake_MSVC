@@ -1,15 +1,21 @@
 #pragma once
 
-// 暂定如下基本规则：
-// 对象不作为返回值，先不搞什么移动构造函数乱七八糟的
-// 基本值类型直接返回，其他复杂类型作为形参引用传进来，调用者负责创建对象
+#include<cstdint>
+
+// C++ 学傻了，暂定如下基本规则
+// 复杂类型不作为返回值，先不搞什么移动构造函数乱七八糟的
+// 基本类型直接返回，复杂类型作为形参引用传进来，调用者负责创建对象
 
 // -- 常用运算 -- //
 
-int CMID(const int x, const int min, const int max);
+class Math {
+  public:
+    static int clamp(const int x, const int min, const int max);
 
-// 插值，t 取值 [0, 1]
-int interpolate(const float x1, const float x2, const float t);
+    // 插值，t 取值 [0, 1]
+    static float mix(const float x1, const float x2, const float t);
+};
+
 
 // -- 基本类型 -- //
 
@@ -34,6 +40,11 @@ class Vector {
     static void interpolate(Vector &v, const Vector &v1, const Vector &v2, float t);
     // 归一化
     static void normalize(Vector &v);
+
+    // 检查坐标是否在视锥体内
+    static uint8_t check_in_cvv(const Vector &v);
+    // 透视除法后，NDC 到屏幕
+    static void ndc_to_screen(Vector &v_new, const Vector &v_old, const float width, const float height);
 
   public:
     float x;
@@ -91,4 +102,18 @@ class Matrix {
 
   public:
     float m[4][4]; // 列主序
+};
+
+class Color {
+  public:
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t a;
+};
+
+class TexCoord {
+  public:
+    float u;
+    float v;
 };
