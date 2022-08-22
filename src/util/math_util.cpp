@@ -14,8 +14,6 @@ Vector::Vector(const float x, const float y, const float z, const float w) : x{x
 
 Vector::Vector() : Vector(0.0f, 0.0f, 0.0f, 0.0f) {}
 
-Vector::~Vector() {}
-
 float Vector::length(const Vector &v) {
     return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 }
@@ -85,8 +83,6 @@ void Vector::ndc_to_screen(Vector &v_new, const Vector &v_old, const float width
 
 Point::Point() : Point(0.0f, 0.0f, 0.0f, 1.0f) {}
 
-Point::~Point() {}
-
 Matrix::Matrix(
     const float v11, const float v12, const float v13, const float v14,
     const float v21, const float v22, const float v23, const float v24,
@@ -105,8 +101,6 @@ Matrix::Matrix() : Matrix(
     0.0f, 0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 0.0f, 1.0f
 ) {}
-
-Matrix::~Matrix() {}
 
 void Matrix::add(Matrix &m, const Matrix &m1, const Matrix &m2) {
     for (int i = 0; i < 4; i++) {
@@ -262,4 +256,22 @@ void Matrix::transform_perspective(Matrix &m, const float left, const float righ
     m.m[2][3] = -1.0f;
 
     m.m[3][2] = 2.0f * near * far / (near - far);
+}
+
+Color::Color(float r, float g, float b, float a) : r{r}, g{g}, b{b}, a{a} {}
+
+void Color::interpolate(Color &color, const Color &color1, const Color &color2, float t) {
+}
+
+TexCoord::TexCoord(float u, float v) : u{u}, v{v} {}
+
+void TexCoord::interpolate(TexCoord &tex, const TexCoord &tex1, const TexCoord &tex2, float t) {
+}
+
+ShaderVFData::ShaderVFData(const Point &pos, const TexCoord &tex, const Color &color) : pos{pos}, tex{tex}, color{color}, rhw{1.0f} {}
+
+void ShaderVFData::init(ShaderVFData &svfd) {
+}
+
+void ShaderVFData::interpolate(ShaderVFData &svfd, const ShaderVFData &svfd1, const ShaderVFData &svfd2, float t) {
 }

@@ -23,7 +23,7 @@ class Vector {
   public:
     explicit Vector(const float x, const float y, const float z, const float w);
     explicit Vector();
-    virtual ~Vector();
+    virtual ~Vector() = default;
 
   public:
     // 模长
@@ -57,7 +57,7 @@ class Point : public Vector {
   public:
     using Vector::Vector;
     explicit Point();
-    virtual ~Point() override;
+    virtual ~Point() override = default;
 };
 
 class Matrix {
@@ -69,7 +69,7 @@ class Matrix {
         const float v41, const float v42, const float v43, const float v44
     );
     explicit Matrix();
-    virtual ~Matrix();
+    virtual ~Matrix() = default;
 
   public:
     // 加法
@@ -106,14 +106,47 @@ class Matrix {
 
 class Color {
   public:
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
+    explicit Color(float r, float g, float b, float a);
+    virtual ~Color() = default;
+
+  public:
+    static void interpolate(Color &color, const Color &color1, const Color &color2, float t);
+
+  public:
+    // [0, 1]
+    float r;
+    float g;
+    float b;
+    float a;
 };
 
 class TexCoord {
   public:
+    explicit TexCoord(float u, float v);
+    virtual ~TexCoord() = default;
+
+  public:
+    static void interpolate(TexCoord &tex, const TexCoord &tex1, const TexCoord &tex2, float t);
+
+  public:
+    // [0, 1]
     float u;
     float v;
+};
+
+class ShaderVFData {
+  public:
+    // 初始的 pos 是未经透视除法的齐次坐标，tex、color 也是原始的，然后经 init() 进行 /w 相关的处理
+    explicit ShaderVFData(const Point &pos, const TexCoord &tex, const Color &color);
+    virtual ~ShaderVFData() = default;
+
+  public:
+    static void init(ShaderVFData &svfd);
+    static void interpolate(ShaderVFData &svfd, const ShaderVFData &svfd1, const ShaderVFData &svfd2, float t);
+
+  public:
+    Point pos;
+    TexCoord tex;
+    Color color;
+    float rhw;
 };
