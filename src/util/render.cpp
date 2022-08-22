@@ -1,16 +1,16 @@
 #include <cmath>
 
-#include "math_util.h"
+#include "render.h"
 
-int Math::clamp(const int x, const int min, const int max) {
+int Math::clamp(int x, int min, int max) {
     return (x < min) ? min : ((x > max) ? max : x);
 }
 
-float Math::mix(const float x1, const float x2, const float t) {
+float Math::mix(float x1, float x2, float t) {
     return x1 + (x2 - x1) * t;
 }
 
-Vector::Vector(const float x, const float y, const float z, const float w) : x{x}, y{y}, z{z}, w{w} {}
+Vector::Vector(float x, float y, float z, float w) : x{x}, y{y}, z{z}, w{w} {}
 
 Vector::Vector() : Vector(0.0f, 0.0f, 0.0f, 0.0f) {}
 
@@ -73,7 +73,7 @@ uint8_t Vector::check_in_cvv(const Vector &v) {
     return check;
 }
 
-void Vector::ndc_to_screen(Vector &v_new, const Vector &v_old, const float width, const float height) {
+void Vector::ndc_to_screen(Vector &v_new, const Vector &v_old, float width, float height) {
     float rhw = 1.0f / v_old.w;
     v_new.x = ( v_old.x * rhw + 1.0f) * width  * 0.5f;
     v_new.y = (-v_old.y * rhw + 1.0f) * height * 0.5f;
@@ -84,10 +84,10 @@ void Vector::ndc_to_screen(Vector &v_new, const Vector &v_old, const float width
 Point::Point() : Point(0.0f, 0.0f, 0.0f, 1.0f) {}
 
 Matrix::Matrix(
-    const float v11, const float v12, const float v13, const float v14,
-    const float v21, const float v22, const float v23, const float v24,
-    const float v31, const float v32, const float v33, const float v34,
-    const float v41, const float v42, const float v43, const float v44
+    float v11, float v12, float v13, float v14,
+    float v21, float v22, float v23, float v24,
+    float v31, float v32, float v33, float v34,
+    float v41, float v42, float v43, float v44
 ) : m {
     {v11, v12, v13, v14},
     {v21, v22, v23, v24},
@@ -156,14 +156,14 @@ void Matrix::set_zero(Matrix &m) {
     m.m[3][0] = m.m[3][1] = m.m[3][2] = m.m[3][3] = 0.0f;
 }
 
-void Matrix::transform_translate(Matrix &m, const float x, const float y, const float z) {
+void Matrix::transform_translate(Matrix &m, float x, float y, float z) {
     Matrix::set_identity(m);
     m.m[3][0] = x;
     m.m[3][1] = z;
     m.m[3][2] = z;
 }
 
-void Matrix::transform_rotate(Matrix &m, const float x, const float y, const float z, const float angle) {
+void Matrix::transform_rotate(Matrix &m, float x, float y, float z, float angle) {
     float a = angle;
     float c = cos(a);
     float s = sin(a);
@@ -194,7 +194,7 @@ void Matrix::transform_rotate(Matrix &m, const float x, const float y, const flo
     m.m[3][3] = 1.0f;
 }
 
-void Matrix::transform_scale(Matrix &m, const float x, const float y, const float z) {
+void Matrix::transform_scale(Matrix &m, float x, float y, float z) {
     Matrix::set_identity(m);
     m.m[0][0] = x;
     m.m[1][1] = z;
@@ -234,7 +234,7 @@ void Matrix::transform_lookat(Matrix &m, const Vector &eye, const Vector &at, co
     m.m[3][3] = 1.0f;
 }
 
-void Matrix::transform_orthographic(Matrix &m, const float left, const float right, const float bottom, const float top, const float near, const float far) {
+void Matrix::transform_orthographic(Matrix &m, float left, float right, float bottom, float top, float near, float far) {
     Matrix::set_identity(m);
     m.m[0][0] = 2.0f / (right - left);
     m.m[1][1] = 2.0f / (top - bottom);
@@ -245,7 +245,7 @@ void Matrix::transform_orthographic(Matrix &m, const float left, const float rig
     m.m[3][2] = (near + far)   / (near - far);
 }
 
-void Matrix::transform_perspective(Matrix &m, const float left, const float right, const float bottom, const float top, const float near, const float far) {
+void Matrix::transform_perspective(Matrix &m, float left, float right, float bottom, float top, float near, float far) {
     Matrix::set_zero(m);
     m.m[0][0] = 2.0f * near / (right - left);
     m.m[1][1] = 2.0f * near / (top - bottom);
@@ -260,18 +260,75 @@ void Matrix::transform_perspective(Matrix &m, const float left, const float righ
 
 Color::Color(float r, float g, float b, float a) : r{r}, g{g}, b{b}, a{a} {}
 
+void Color::add(Color &color, const Color &color1, const Color &color2) {
+    color.r = color1.r + color2.r;
+    color.g = color1.g + color2.g;
+    color.b = color1.b + color2.b;
+    color.a = color1.a + color2.a;
+}
+
+void Color::sub(Color &color, const Color &color1, const Color &color2) {
+    color.r = color1.r - color2.r;
+    color.g = color1.g - color2.g;
+    color.b = color1.b - color2.b;
+    color.a = color1.a - color2.a;
+}
+
 void Color::interpolate(Color &color, const Color &color1, const Color &color2, float t) {
+    color.r = Math::mix(color1.r, color2.r, t);
+    color.g = Math::mix(color1.g, color2.g, t);
+    color.b = Math::mix(color1.b, color2.b, t);
+    color.a = Math::mix(color1.a, color2.a, t);
 }
 
 TexCoord::TexCoord(float u, float v) : u{u}, v{v} {}
 
+void TexCoord::add(TexCoord &tex, const TexCoord &tex1, const TexCoord &tex2) {
+    tex.u = tex1.u + tex2.u;
+    tex.v = tex1.v + tex2.v;
+}
+
+void TexCoord::sub(TexCoord &tex, const TexCoord &tex1, const TexCoord &tex2) {
+    tex.u = tex1.u - tex2.u;
+    tex.v = tex1.v - tex2.v;
+}
+
 void TexCoord::interpolate(TexCoord &tex, const TexCoord &tex1, const TexCoord &tex2, float t) {
+    tex.u = Math::mix(tex1.u, tex2.u, t);
+    tex.v = Math::mix(tex1.v, tex2.v, t);
 }
 
 ShaderVFData::ShaderVFData(const Point &pos, const TexCoord &tex, const Color &color) : pos{pos}, tex{tex}, color{color}, rhw{1.0f} {}
 
-void ShaderVFData::init(ShaderVFData &svfd) {
+void ShaderVFData::ndc_to_screen(ShaderVFData &svfd, float width, float height) {
+    float rhw = 1.0f / svfd.pos.w;
+    Point::ndc_to_screen(svfd.pos, svfd.pos, width, height);
+    svfd.tex.u *= rhw;
+    svfd.tex.v *= rhw;
+    svfd.color.r *= rhw;
+    svfd.color.g *= rhw;
+    svfd.color.b *= rhw;
+    svfd.color.a *= rhw;
+    svfd.rhw = rhw;
+}
+
+void ShaderVFData::add(ShaderVFData &svfd, const ShaderVFData &svfd1, const ShaderVFData &svfd2) {
+    Point::add(svfd.pos, svfd1.pos, svfd2.pos);
+    TexCoord::add(svfd.tex, svfd1.tex, svfd2.tex);
+    Color::add(svfd.color, svfd1.color, svfd2.color);
+    svfd.rhw = svfd1.rhw + svfd2.rhw;
+}
+
+void ShaderVFData::sub(ShaderVFData &svfd, const ShaderVFData &svfd1, const ShaderVFData &svfd2) {
+    Point::sub(svfd.pos, svfd1.pos, svfd2.pos);
+    TexCoord::sub(svfd.tex, svfd1.tex, svfd2.tex);
+    Color::sub(svfd.color, svfd1.color, svfd2.color);
+    svfd.rhw = svfd1.rhw - svfd2.rhw;
 }
 
 void ShaderVFData::interpolate(ShaderVFData &svfd, const ShaderVFData &svfd1, const ShaderVFData &svfd2, float t) {
+    Point::interpolate(svfd.pos, svfd1.pos, svfd2.pos, t);
+    TexCoord::interpolate(svfd.tex, svfd1.tex, svfd2.tex, t);
+    Color::interpolate(svfd.color, svfd1.color, svfd2.color, t);
+    svfd.rhw = Math::mix(svfd1.rhw, svfd2.rhw, t);
 }

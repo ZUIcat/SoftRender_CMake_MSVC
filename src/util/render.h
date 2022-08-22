@@ -10,10 +10,10 @@
 
 class Math {
   public:
-    static int clamp(const int x, const int min, const int max);
+    static int clamp(int x, int min, int max);
 
     // 插值，t 取值 [0, 1]
-    static float mix(const float x1, const float x2, const float t);
+    static float mix(float x1, float x2, float t);
 };
 
 
@@ -21,7 +21,7 @@ class Math {
 
 class Vector {
   public:
-    explicit Vector(const float x, const float y, const float z, const float w);
+    explicit Vector(float x, float y, float z, float w);
     explicit Vector();
     virtual ~Vector() = default;
 
@@ -44,7 +44,7 @@ class Vector {
     // 检查坐标是否在视锥体内
     static uint8_t check_in_cvv(const Vector &v);
     // 透视除法后，NDC 到屏幕
-    static void ndc_to_screen(Vector &v_new, const Vector &v_old, const float width, const float height);
+    static void ndc_to_screen(Vector &v_new, const Vector &v_old, float width, float height);
 
   public:
     float x;
@@ -63,10 +63,10 @@ class Point : public Vector {
 class Matrix {
   public:
     explicit Matrix(
-        const float v11, const float v12, const float v13, const float v14,
-        const float v21, const float v22, const float v23, const float v24,
-        const float v31, const float v32, const float v33, const float v34,
-        const float v41, const float v42, const float v43, const float v44
+        float v11, float v12, float v13, float v14,
+        float v21, float v22, float v23, float v24,
+        float v31, float v32, float v33, float v34,
+        float v41, float v42, float v43, float v44
     );
     explicit Matrix();
     virtual ~Matrix() = default;
@@ -88,17 +88,17 @@ class Matrix {
     static void set_zero(Matrix &m);
 
     // 获取变换矩阵 平移
-    static void transform_translate(Matrix &m, const float x, const float y, const float z);
+    static void transform_translate(Matrix &m, float x, float y, float z);
     // 获取变换矩阵 旋转
-    static void transform_rotate(Matrix &m, const float x, const float y, const float z, const float angle);
+    static void transform_rotate(Matrix &m, float x, float y, float z, float angle);
     // 获取变换矩阵 缩放
-    static void transform_scale(Matrix &m, const float x, const float y, const float z);
+    static void transform_scale(Matrix &m, float x, float y, float z);
     // 获取变换矩阵 摄像机
     static void transform_lookat(Matrix &m, const Vector &eye, const Vector &at, const Vector &up);
     // 获取变换矩阵 正交投影
-    static void transform_orthographic(Matrix &m, const float left, const float right, const float bottom, const float top, const float near, const float far);
+    static void transform_orthographic(Matrix &m, float left, float right, float bottom, float top, float near, float far);
     // 获取变换矩阵 透视投影
-    static void transform_perspective(Matrix &m, const float left, const float right, const float bottom, const float top, const float near, const float far);
+    static void transform_perspective(Matrix &m, float left, float right, float bottom, float top, float near, float far);
 
   public:
     float m[4][4]; // 列主序
@@ -110,6 +110,8 @@ class Color {
     virtual ~Color() = default;
 
   public:
+    static void add(Color &color, const Color &color1, const Color &color2);
+    static void sub(Color &color, const Color &color1, const Color &color2);
     static void interpolate(Color &color, const Color &color1, const Color &color2, float t);
 
   public:
@@ -126,6 +128,8 @@ class TexCoord {
     virtual ~TexCoord() = default;
 
   public:
+    static void add(TexCoord &tex, const TexCoord &tex1, const TexCoord &tex2);
+    static void sub(TexCoord &tex, const TexCoord &tex1, const TexCoord &tex2);
     static void interpolate(TexCoord &tex, const TexCoord &tex1, const TexCoord &tex2, float t);
 
   public:
@@ -136,12 +140,14 @@ class TexCoord {
 
 class ShaderVFData {
   public:
-    // 初始的 pos 是未经透视除法的齐次坐标，tex、color 也是原始的，然后经 init() 进行 /w 相关的处理
+    // 初始的 pos 是未经透视除法的齐次坐标，tex、color 也是原始的，然后经 ndc_to_screen() 进行 /w 相关的处理
     explicit ShaderVFData(const Point &pos, const TexCoord &tex, const Color &color);
     virtual ~ShaderVFData() = default;
 
   public:
-    static void init(ShaderVFData &svfd);
+    static void ndc_to_screen(ShaderVFData &svfd, float width, float height);
+    static void add(ShaderVFData &svfd, const ShaderVFData &svfd1, const ShaderVFData &svfd2);
+    static void sub(ShaderVFData &svfd, const ShaderVFData &svfd1, const ShaderVFData &svfd2);
     static void interpolate(ShaderVFData &svfd, const ShaderVFData &svfd1, const ShaderVFData &svfd2, float t);
 
   public:
