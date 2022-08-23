@@ -10,7 +10,7 @@ add_compile_options("/utf-8")
 
 add_executable(main
     "src/TheMain.h" "src/TheMain.cpp"
-    "src/util/math_util.h" "src/util/math_util.cpp"
+    "src/util/render.h" "src/util/render.cpp"
 )
 
 target_include_directories(main PRIVATE include)
