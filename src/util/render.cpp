@@ -68,15 +68,15 @@ void Vector::normalize(Vector &v) {
     v.w = 1.0f;
 }
 
-uint8_t Vector::check_in_cvv(const Vector &v) {
+uint8_t Vector::checkInCVV(const Vector &v) {
     uint8_t check = 0;
-    float w = v.w; // TODO 为什么 z 在开头，w == 0 怎么办
-    if (v.z < -w) check |= 0b00000001;
-    if (v.z >  w) check |= 0b00000010;
-    if (v.x < -w) check |= 0b00000100;
-    if (v.x >  w) check |= 0b00001000;
-    if (v.y < -w) check |= 0b00010000;
-    if (v.y >  w) check |= 0b00100000;
+    float w = v.w;
+    if (v.x < -w) check |= 0b00000001;
+    if (v.x >  w) check |= 0b00000010;
+    if (v.y < -w) check |= 0b00000100;
+    if (v.y >  w) check |= 0b00001000;
+    if (v.z < -w) check |= 0b00010000;
+    if (v.z >  w) check |= 0b00100000;
     return check;
 }
 
@@ -455,3 +455,9 @@ void Trapezoid::getScanLine(ScanLine &scanLine, const Trapezoid &trap, int y) {
     ShaderVFData::sub(scanLine.step, trap.left.svfd_i, trap.right.svfd_i);
     ShaderVFData::div(scanLine.step, scanLine.step, width);
 }
+
+FrameBuffer::FrameBuffer() {
+    //this->colorBuffer = new int[width][height];
+}
+
+FrameBuffer::~FrameBuffer() {}

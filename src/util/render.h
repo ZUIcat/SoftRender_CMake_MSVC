@@ -44,7 +44,7 @@ class Vector {
     static void normalize(Vector &v);
 
     // 检查坐标是否在视锥体内
-    static uint8_t check_in_cvv(const Vector &v);
+    static uint8_t checkInCVV(const Vector &v);
     // 齐次坐标进行透视除法后，然后从 NDC 到屏幕
     static void homoToScreen(Vector &v_new, const Vector &v_old, float width, float height);
 
@@ -210,3 +210,23 @@ class Trapezoid {
     float bottom; // 底长
 };
 
+enum class RenderState {
+    WIREFRAME,
+    TEXTURE,
+    COLOR
+};
+
+class FrameBuffer {
+  public:
+    explicit FrameBuffer();
+    virtual ~FrameBuffer();
+
+  public:
+    int width = 800;
+    int height = 600;
+    int **colorBuffer = nullptr;
+    float **depthBuffer = nullptr;
+    RenderState renderState = RenderState::WIREFRAME;
+    uint32_t backColor = 0xC0C0C0;
+    uint32_t foreColor = 0xFFFFFF;
+};
