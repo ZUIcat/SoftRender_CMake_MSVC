@@ -8,6 +8,8 @@ endif()
 
 add_compile_options("/utf-8")
 
+add_definitions(-DUNICODE -D_UNICODE)
+
 add_executable(main
     "src/TheMain.h" "src/TheMain.cpp"
     "src/util/render.h" "src/util/render.cpp"
