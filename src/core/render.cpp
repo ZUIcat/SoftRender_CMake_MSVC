@@ -436,22 +436,23 @@ int Trapezoid::initFromTriangle(Trapezoid (&trap)[2], const ShaderVFData &svfd1,
     return 2;
 }
 
-void Trapezoid::edgeInterpolate(Trapezoid &trap, float y) {
+void Trapezoid::getScanLine(ScanLine &scanLine, Trapezoid &trap, int y) {
+    // interpolate
+    float y_inter = static_cast<float>(y) + 0.5f;
     float s1 = trap.left.svfd2.pos.y - trap.left.svfd1.pos.y;
     float s2 = trap.right.svfd2.pos.y - trap.right.svfd1.pos.y;
-    float t1 = (y - trap.left.svfd1.pos.y) / s1;
-    float t2 = (y - trap.right.svfd1.pos.y) / s2;
+    float t1 = (y_inter - trap.left.svfd1.pos.y) / s1;
+    float t2 = (y_inter - trap.right.svfd1.pos.y) / s2;
     ShaderVFData::interpolate(trap.left.svfd_i, trap.left.svfd1, trap.left.svfd2, t1);
     ShaderVFData::interpolate(trap.right.svfd_i, trap.right.svfd1, trap.right.svfd2, t2);
-}
-
-void Trapezoid::getScanLine(ScanLine &scanLine, const Trapezoid &trap, int y) {
+    // get ScanLine
     float width = trap.right.svfd_i.pos.x - trap.left.svfd_i.pos.x;
     scanLine.x = static_cast<int>(trap.left.svfd_i.pos.x + 0.5f); // +0.5f 再 (int)，这是四舍五入
     scanLine.y = y;
     scanLine.width = static_cast<int>(trap.right.svfd_i.pos.x + 0.5f) - scanLine.x;
     scanLine.svfd = trap.left.svfd_i;
-    if (trap.left.svfd_i.pos.x >= trap.right.svfd_i.pos.x) scanLine.width = 0;
+    if (trap.left.svfd_i.pos.x >= trap.right.svfd_i.pos.x)
+        scanLine.width = 0;
     ShaderVFData::sub(scanLine.step, trap.left.svfd_i, trap.right.svfd_i);
     ShaderVFData::div(scanLine.step, scanLine.step, width);
 }

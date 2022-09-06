@@ -4,12 +4,15 @@
 
 #include "render.h"
 
+// 绘制种类
 enum class RenderState {
-    WIREFRAME = 0b00000001,
-    TEXTURE   = 0b00000010,
-    COLOR     = 0b00000100,
+    WIREFRAME = 0b00000001, // 纯线框
+    TEXTURE   = 0b00000010, // 材质采样
+    COLOR     = 0b00000100, // 颜色插值
 };
 
+// 抽象的画布类
+// TODO 设计的不好，不应该依赖于 render.h 里的东西
 class Canvas {
   public:
     explicit Canvas(int width, int height);
@@ -34,9 +37,9 @@ class Canvas {
     inline virtual void setRenderState(RenderState renderState) { this->renderState = renderState; };
 
   private:
-    int width;
-    int height;
-    uint32_t *colorBuffer = nullptr;
-    uint8_t *depthBuffer = nullptr;
-    RenderState renderState = RenderState::WIREFRAME;
+    int width;                                        // 宽度
+    int height;                                       // 高度
+    uint32_t *colorBuffer = nullptr;                  // 颜色缓冲附件
+    uint8_t *depthBuffer = nullptr;                   // 深度缓冲附件
+    RenderState renderState = RenderState::WIREFRAME; // 现在的绘制种类
 };
