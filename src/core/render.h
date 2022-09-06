@@ -209,24 +209,3 @@ class Trapezoid {
     float top;    // 顶长
     float bottom; // 底长
 };
-
-enum class RenderState {
-    WIREFRAME,
-    TEXTURE,
-    COLOR
-};
-
-class FrameBuffer {
-  public:
-    explicit FrameBuffer();
-    virtual ~FrameBuffer();
-
-  public:
-    int width = 800;
-    int height = 600;
-    int **colorBuffer = nullptr;
-    float **depthBuffer = nullptr;
-    RenderState renderState = RenderState::WIREFRAME;
-    uint32_t backColor = 0xC0C0C0;
-    uint32_t foreColor = 0xFFFFFF;
-};

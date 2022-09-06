@@ -1,6 +1,8 @@
 /.vs/*
 !/.vs/launch.vs.json
 
+/3rdParty/
+
 /out/
 
 /bin/main.exe

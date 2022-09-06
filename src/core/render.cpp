@@ -455,9 +455,3 @@ void Trapezoid::getScanLine(ScanLine &scanLine, const Trapezoid &trap, int y) {
     ShaderVFData::sub(scanLine.step, trap.left.svfd_i, trap.right.svfd_i);
     ShaderVFData::div(scanLine.step, scanLine.step, width);
 }
-
-FrameBuffer::FrameBuffer() {
-    //this->colorBuffer = new int[width][height];
-}
-
-FrameBuffer::~FrameBuffer() {}

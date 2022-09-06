@@ -1,12 +1,16 @@
 {
-  "version": "0.2.1",
-  "defaults": {},
-  "configurations": [
-    {
-      "type": "default",
-      "project": "CMakeLists.txt",
-      "projectTarget": "",
-      "name": "CMakeLists.txt"
-    }
-  ]
+    "version": "0.2.1",
+    "defaults": {},
+    "configurations": [
+        {
+            "type": "default",
+            "project": "CMakeLists.txt",
+            "projectTarget": "",
+            "name": "CMakeLists.txt",
+            "currentDir": "${workspaceRoot}",
+            "env": {
+                "PATH": "${env.PATH};${workspaceRoot}\\3rdParty\\SDL2-2.24.0\\lib\\x64"
+            }
+        }
+    ]
 }
