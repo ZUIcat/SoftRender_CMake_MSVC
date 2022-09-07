@@ -19,7 +19,7 @@ class Canvas {
     virtual ~Canvas();
 
   public:
-    virtual void clear(uint32_t color);
+    virtual void clear(uint32_t color, float depth);
     // Base 2D, no depth
     virtual void drawPoint(int x, int y, uint32_t color);
     virtual void drawLine(int x1, int y1, int x2, int y2, uint32_t color);
@@ -32,14 +32,14 @@ class Canvas {
     inline virtual int getWidth() const { return width; };
     inline virtual int getHeight() const { return height; };
     inline virtual uint32_t *const getColorBuffer() const { return colorBuffer; };
-    inline virtual uint8_t *const getDepthBuffer() const { return depthBuffer; };
+    inline virtual float *const getDepthBuffer() const { return depthBuffer; };
     inline virtual RenderState getRenderState() const { return renderState; };
     inline virtual void setRenderState(RenderState renderState) { this->renderState = renderState; };
 
   private:
     int width;                                        // 宽度
     int height;                                       // 高度
-    uint32_t *colorBuffer = nullptr;                  // 颜色缓冲附件
-    uint8_t *depthBuffer = nullptr;                   // 深度缓冲附件
+    uint32_t *colorBuffer = nullptr;                  // 颜色缓冲附件（ARGB8888）
+    float *depthBuffer = nullptr;                     // 深度缓冲附件
     RenderState renderState = RenderState::WIREFRAME; // 现在的绘制种类
 };

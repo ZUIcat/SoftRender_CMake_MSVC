@@ -6,7 +6,7 @@ void MyWindow::onCreate(Canvas &canvas){
 };
 
 void MyWindow::onUpdate(Canvas &canvas) {
-    canvas.clear(0xFF88C9FF);
+    canvas.clear(0xFF88C9FF, 0.0f);
     canvas.drawLine(10, 10, 100, 100, 0);
 };
 

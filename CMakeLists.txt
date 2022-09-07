@@ -6,7 +6,12 @@ if(NOT MSVC)
     message(FATAL_ERROR "Can only be compiled with MSVC!")
 endif()
 
-add_compile_options("/utf-8")
+add_compile_options(
+    /utf-8
+    /W4
+)
+
+message(${CMAKE_CXX_FLAGS})
 
 add_definitions(-DUNICODE -D_UNICODE)
 

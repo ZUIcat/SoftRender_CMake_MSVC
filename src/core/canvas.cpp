@@ -2,7 +2,7 @@
 
 Canvas::Canvas(int width, int height) : width{width}, height{height} {
     colorBuffer = new uint32_t[width * height];
-    depthBuffer = new uint8_t[width * height]; // TODO 初始值为 0 可以吗？
+    depthBuffer = new float[width * height]; // TODO 初始值为 0 可以吗？
 }
 
 Canvas::~Canvas() {
@@ -10,7 +10,7 @@ Canvas::~Canvas() {
     delete[] depthBuffer;
 }
 
-void Canvas::clear(uint32_t color, uint8_t depth) {
+void Canvas::clear(uint32_t color, float depth) {
     for (int i = 0; i < width * height; i++) {
         colorBuffer[i] = color;
         depthBuffer[i] = depth;
@@ -75,10 +75,10 @@ void Canvas::drawScanLine(const ScanLine &scanLine) {
     int canvas_width = width;
 
     uint32_t *thisColorBuffer = &colorBuffer[canvas_width * scanLine.y];
-    uint8_t *thisDepthBuffer = &depthBuffer[canvas_width * scanLine.y];
+    float *thisDepthBuffer = &depthBuffer[canvas_width * scanLine.y];
 
     ShaderVFData v = scanLine.svfd;
-    for (; line_witdh_now > 0; line_x_now++, line_witdh_now--) {
+    for (; line_witdh_now > 0; line_x_now++, line_witdh_now--) { // TODO 边界条件
         if (line_x_now >= 0 && line_x_now < canvas_width) {
             float rhw = v.rhw; // 获取 1 / w（即 1 / -z）
             if (rhw > thisDepthBuffer[line_x_now]) { // 深度测试
@@ -97,15 +97,31 @@ void Canvas::drawScanLine(const ScanLine &scanLine) {
                     // TODO
                 }
             }
-        } else {
-            break;
         }
+        //else {
+        //    break;
+        //}
         ShaderVFData::add(v, v, scanLine.step);
     }
 }
 
 void Canvas::drawTrapezoid(const Trapezoid &trapezoid) {
+    int canvas_height = height;
+    int top = static_cast<int>(trapezoid.top + 0.5f);
+    int bottom = static_cast<int>(trapezoid.bottom + 0.5f);
 
+    ScanLine s{}; // TODO no copy
+    Trapezoid t = trapezoid; // TODO no copy
+
+    for (int i = top; i < bottom; i++) { // TODO 边界条件
+        if (i >= 0 && i < canvas_height) {
+            Trapezoid::getScanLine(s, t, i);
+            drawScanLine(s);
+        }
+        //else {
+        //    break;
+        //}
+    }
 }
 
 void Canvas::drawPrimitive(const ShaderVFData &svfd1, const ShaderVFData &svfd2, const ShaderVFData &svfd3) {

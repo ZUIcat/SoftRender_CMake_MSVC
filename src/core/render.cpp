@@ -167,7 +167,7 @@ void Matrix::setZero(Matrix &m) {
 void Matrix::transformTranslate(Matrix &m, float x, float y, float z) {
     Matrix::setIdentity(m);
     m.m[3][0] = x;
-    m.m[3][1] = z;
+    m.m[3][1] = y;
     m.m[3][2] = z;
 }
 
@@ -205,7 +205,7 @@ void Matrix::transformRotate(Matrix &m, float x, float y, float z, float angle) 
 void Matrix::transformScale(Matrix &m, float x, float y, float z) {
     Matrix::setIdentity(m);
     m.m[0][0] = x;
-    m.m[1][1] = z;
+    m.m[1][1] = y;
     m.m[2][2] = z;
 }
 
@@ -357,9 +357,9 @@ void ShaderVFData::interpolate(ShaderVFData &svfd, const ShaderVFData &svfd1, co
 
 void ShaderVFData::div(ShaderVFData &svfd, const ShaderVFData &svfd1, float t) {
     float t_inv = 1.0f / t;
-    Point::mul(svfd.pos, svfd.pos, t_inv);
-    TexCoord::mul(svfd.tex, svfd.tex, t_inv);
-    Color::mul(svfd.color, svfd.color, t_inv);
+    Point::mul(svfd.pos, svfd1.pos, t_inv);
+    TexCoord::mul(svfd.tex, svfd1.tex, t_inv);
+    Color::mul(svfd.color, svfd1.color, t_inv);
     svfd.rhw *= t_inv;
 }
 
@@ -449,7 +449,7 @@ void Trapezoid::getScanLine(ScanLine &scanLine, Trapezoid &trap, int y) {
     float width = trap.right.svfd_i.pos.x - trap.left.svfd_i.pos.x;
     scanLine.x = static_cast<int>(trap.left.svfd_i.pos.x + 0.5f); // +0.5f 再 (int)，这是四舍五入
     scanLine.y = y;
-    scanLine.width = static_cast<int>(trap.right.svfd_i.pos.x + 0.5f) - scanLine.x;
+    scanLine.width = static_cast<int>(trap.right.svfd_i.pos.x + 0.5f) - scanLine.x; // TODO 边界条件
     scanLine.svfd = trap.left.svfd_i;
     if (trap.left.svfd_i.pos.x >= trap.right.svfd_i.pos.x)
         scanLine.width = 0;

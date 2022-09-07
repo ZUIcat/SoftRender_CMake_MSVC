@@ -198,11 +198,7 @@ class Trapezoid {
     // 注：三角形可视为顶（底）为 0 的梯形
     // 根据三角形生成 0-2 个梯形，并且返回合法梯形的数量
     static int initFromTriangle(Trapezoid (&trap)[2], const ShaderVFData &svfd1, const ShaderVFData &svfd2, const ShaderVFData &svfd3);
-    // （弃用）根据 y 坐标插值，将临时的数据存入 Edge 里的 svfd_i 里
-    static void _edgeInterpolate(Trapezoid &trap, float y);
-    // （弃用）根据临时插值数据得到确切的扫描线
-    static void _getScanLine(ScanLine &scanLine, const Trapezoid &trap, int y);
-    // 根据栅格化的 y 坐标插值，得到确切的扫描线
+    // 根据栅格化的 y 坐标插值，将临时的数据存入 Edge 里的 svfd_i 里，接着计算出确切的栅格化后的扫描线
     static void getScanLine(ScanLine &scanLine, Trapezoid &trap, int y);
 
   public:
