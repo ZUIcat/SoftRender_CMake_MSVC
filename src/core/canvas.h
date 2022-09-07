@@ -6,7 +6,7 @@
 
 // 绘制种类
 enum class RenderState {
-    WIREFRAME = 0b00000001, // 纯线框
+    WIREFRAME = 0b00000001, // 线框
     TEXTURE   = 0b00000010, // 材质采样
     COLOR     = 0b00000100, // 颜色插值
 };
@@ -19,13 +19,21 @@ class Canvas {
     virtual ~Canvas();
 
   public:
+    // 清除 颜色缓冲附件 和 深度缓冲附件
     virtual void clear(uint32_t color, float depth);
-    // Base 2D, no depth
+
+    // == Base 2D, no depth ==
+    // 画点（屏幕空间）
     virtual void drawPoint(int x, int y, uint32_t color);
+    // 画线（屏幕空间）
     virtual void drawLine(int x1, int y1, int x2, int y2, uint32_t color);
-    // For 3D, with depth
+
+    // == For 3D, with depth ==
+    // 画扫描线（屏幕空间）
     virtual void drawScanLine(const ScanLine &scanLine);
+    // 画梯形（屏幕空间）
     virtual void drawTrapezoid(const Trapezoid &trapezoid);
+    // 画三角形（屏幕空间）
     virtual void drawPrimitive(const ShaderVFData &svfd1, const ShaderVFData &svfd2, const ShaderVFData &svfd3);
 
   public:

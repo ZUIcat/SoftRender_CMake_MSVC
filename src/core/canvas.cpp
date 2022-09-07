@@ -125,5 +125,12 @@ void Canvas::drawTrapezoid(const Trapezoid &trapezoid) {
 }
 
 void Canvas::drawPrimitive(const ShaderVFData &svfd1, const ShaderVFData &svfd2, const ShaderVFData &svfd3) {
+    Trapezoid trapezoid[2];
 
+    // 颜色插值模式 或 材质采样模式
+    if (static_cast<int>(renderState) & (static_cast<int>(RenderState::COLOR) | static_cast<int>(RenderState::TEXTURE))) {
+    }
+    // 线框模式
+    if (static_cast<int>(renderState) & static_cast<int>(RenderState::WIREFRAME)) {
+    }
 }

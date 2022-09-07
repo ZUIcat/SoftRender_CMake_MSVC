@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 project("SoftRender_CMake_MSVC" VERSION 0.1.0)
 
@@ -6,14 +6,18 @@ if(NOT MSVC)
     message(FATAL_ERROR "Can only be compiled with MSVC!")
 endif()
 
+# 强制显示具体的命令行调用
+# set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL "ON" FORCE)
+
 add_compile_options(
     /utf-8
     /W4
 )
 
-message(${CMAKE_CXX_FLAGS})
-
-add_definitions(-DUNICODE -D_UNICODE)
+add_definitions(
+    -DUNICODE
+    -D_UNICODE
+)
 
 add_executable(main
     "src/main.h" "src/main.cpp"
