@@ -22,6 +22,7 @@ class Math {
 class Vector {
   public:
     explicit Vector(float x, float y, float z, float w);
+    explicit Vector(float x, float y, float z);
     explicit Vector();
     virtual ~Vector() = default;
 
@@ -58,6 +59,7 @@ class Vector {
 class Point : public Vector {
   public:
     using Vector::Vector;
+    explicit Point(float x, float y, float z);
     explicit Point();
     virtual ~Point() override = default;
 };
@@ -146,7 +148,7 @@ class TexCoord {
 
 class ShaderVFData {
   public:
-    // 初始的 pos 是未经透视除法的齐次坐标，tex、color 也是原始的，然后经 ndc_to_screen() 进行 /w 相关的处理
+    // 初始的 pos 是未经透视除法的齐次坐标，tex、color 也是原始的，然后经 homoToScreen() 进行 /w 相关的处理
     explicit ShaderVFData(const Point &pos, const TexCoord &tex, const Color &color);
     explicit ShaderVFData();
     virtual ~ShaderVFData() = default;

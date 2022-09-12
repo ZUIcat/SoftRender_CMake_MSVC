@@ -62,7 +62,6 @@ void Window::startLoop() {
     nFrequency = SDL_GetPerformanceFrequency();
     nPrevCounter = SDL_GetPerformanceCounter();
 
-    SDL_Event event;
     while (status != WindowStatus::quit) {
         // 状态为 pause 就跳过这次循环
         if (status == WindowStatus::pause) {
@@ -86,37 +85,18 @@ void Window::startLoop() {
             fpsCount++;
         }
 
-        // 处理事件
-        if (SDL_PollEvent(&event)) {
-            switch (event.type) {
-            case SDL_QUIT:
-                status = WindowStatus::quit;
-                break;
-            case SDL_KEYDOWN:
-                // 键盘按下事件，可以查看 SDL_KeyboardEvent 结构体内容
-                // event.key.keysym
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                // 鼠标按钮按下事件，可以查看 SDL_MouseButtonEvent 结构体内容
-                // event.button.x, event.button.y
-                break;
-            default:
-                break;
-            }
-        } else {
-            // 清除背景
-            // SDL_SetRenderDrawColor(pRenderer, 50, 50, 50, 255);
-            // SDL_RenderClear(pRenderer);
+        // 清除背景
+        // SDL_SetRenderDrawColor(pRenderer, 50, 50, 50, 255);
+        // SDL_RenderClear(pRenderer);
 
-            onUpdate(canvas);
+        onUpdate(canvas);
 
-            // 渲染图像
-            SDL_UpdateTexture(pTexture, NULL, canvas.getColorBuffer(), canvas.getWidth() * sizeof(uint32_t));
-            SDL_RenderCopy(pRenderer, pTexture, NULL, NULL);
+        // 渲染图像
+        SDL_UpdateTexture(pTexture, NULL, canvas.getColorBuffer(), canvas.getWidth() * sizeof(uint32_t));
+        SDL_RenderCopy(pRenderer, pTexture, NULL, NULL);
 
-            // 显示图像
-            SDL_RenderPresent(pRenderer);
-        }
+        // 显示图像
+        SDL_RenderPresent(pRenderer);
     }
 }
 

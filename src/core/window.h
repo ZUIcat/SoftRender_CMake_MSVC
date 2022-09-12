@@ -35,14 +35,14 @@ class Window {
     inline virtual const std::string getTitle() const { return title; };
     inline virtual const Canvas &getCanvas() const { return canvas; };
 
-  private:
+  protected:
     int width;
     int height;
     WindowStatus status = WindowStatus::loop;
     std::string title;
     Canvas canvas;
 
-  private:
+  protected:
     SDL_Window *pWindow = nullptr;
     SDL_Renderer *pRenderer = nullptr;
     SDL_Texture *pTexture = nullptr;

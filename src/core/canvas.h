@@ -21,6 +21,9 @@ class Canvas {
   public:
     // 清除 颜色缓冲附件 和 深度缓冲附件
     virtual void clear(uint32_t color, float depth);
+    // 设置 获取 前景色
+    inline virtual void setForeColor(uint32_t color) { foreColor = color; }
+    inline virtual uint32_t getForeColor() { return foreColor; }
 
     // == Base 2D, no depth ==
     // 画点（屏幕空间）
@@ -35,6 +38,8 @@ class Canvas {
     virtual void drawTrapezoid(const Trapezoid &trapezoid);
     // 画三角形（屏幕空间）
     virtual void drawPrimitive(const ShaderVFData &svfd1, const ShaderVFData &svfd2, const ShaderVFData &svfd3);
+    // 画三角形们（齐次空间，会自动进行 homoToScreen）
+    virtual void drawPrimitives(const ShaderVFData *const svfd_p, size_t svdf_len, const int *const index_p, size_t index_len);
 
   public:
     inline virtual int getWidth() const { return width; };
@@ -50,4 +55,5 @@ class Canvas {
     uint32_t *colorBuffer = nullptr;                  // 颜色缓冲附件（ARGB8888）
     float *depthBuffer = nullptr;                     // 深度缓冲附件
     RenderState renderState = RenderState::WIREFRAME; // 现在的绘制种类
+    uint32_t foreColor;                               // 前景色（主要用于线框）
 };

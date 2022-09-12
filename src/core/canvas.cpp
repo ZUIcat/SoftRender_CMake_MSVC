@@ -125,12 +125,43 @@ void Canvas::drawTrapezoid(const Trapezoid &trapezoid) {
 }
 
 void Canvas::drawPrimitive(const ShaderVFData &svfd1, const ShaderVFData &svfd2, const ShaderVFData &svfd3) {
-    Trapezoid trapezoid[2];
+    Trapezoid trapezoid[2]; // TODO no create
 
     // 颜色插值模式 或 材质采样模式
     if (static_cast<int>(renderState) & (static_cast<int>(RenderState::COLOR) | static_cast<int>(RenderState::TEXTURE))) {
+        int n = Trapezoid::initFromTriangle(trapezoid, svfd1, svfd2, svfd3);
+        if (n >= 1) Canvas::drawTrapezoid(trapezoid[0]);
+        if (n == 2) Canvas::drawTrapezoid(trapezoid[1]);
     }
     // 线框模式
+    // TODO 这里偷懒了 线框模式也需要深度检测的
     if (static_cast<int>(renderState) & static_cast<int>(RenderState::WIREFRAME)) {
+        // TODO 直接 static_cast<int>() 吗？不四舍五入或者算一下？
+        Canvas::drawLine(static_cast<int>(svfd1.pos.x), static_cast<int>(svfd1.pos.y), static_cast<int>(svfd2.pos.x), static_cast<int>(svfd2.pos.y), foreColor);
+        Canvas::drawLine(static_cast<int>(svfd2.pos.x), static_cast<int>(svfd2.pos.y), static_cast<int>(svfd3.pos.x), static_cast<int>(svfd3.pos.y), foreColor);
+        Canvas::drawLine(static_cast<int>(svfd3.pos.x), static_cast<int>(svfd3.pos.y), static_cast<int>(svfd1.pos.x), static_cast<int>(svfd1.pos.y), foreColor);
+    }
+}
+
+void Canvas::drawPrimitives(const ShaderVFData *const svfd_p, size_t svdf_len, const int *const index_p, size_t index_len) {
+    for (size_t i = 0; i < index_len; i += 3) {
+        int svfd_index_1 = index_p[i];
+        int svfd_index_2 = index_p[i + 1];
+        int svfd_index_3 = index_p[i + 2];
+        if (svfd_index_1 >= 0 && svfd_index_1 < svdf_len &&
+            svfd_index_2 >= 0 && svfd_index_2 < svdf_len &&
+            svfd_index_3 >= 0 && svfd_index_3 < svdf_len) {
+            ShaderVFData sdvf_1{svfd_p[svfd_index_1]};
+            ShaderVFData sdvf_2{svfd_p[svfd_index_2]};
+            ShaderVFData sdvf_3{svfd_p[svfd_index_3]};
+            if (Vector::checkInCVV(sdvf_1.pos) == 0 &&
+                Vector::checkInCVV(sdvf_2.pos) == 0 &&
+                Vector::checkInCVV(sdvf_3.pos) == 0) {
+                ShaderVFData::homoToScreen(sdvf_1, width, height);
+                ShaderVFData::homoToScreen(sdvf_2, width, height);
+                ShaderVFData::homoToScreen(sdvf_3, width, height);
+                drawPrimitive(sdvf_1, sdvf_2, sdvf_3);
+            }
+        }
     }
 }
