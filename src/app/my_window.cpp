@@ -9,7 +9,7 @@ void MyWindow::onCreate(Canvas &canvas){
 
 void MyWindow::onUpdate(Canvas &canvas) {
     // 处理事件
-    float k = 0.005f;
+    float k = 0.01f;
     SDL_Event event;
     if (SDL_PollEvent(&event)) {
         switch (event.type) {
@@ -49,7 +49,7 @@ void MyWindow::onUpdate(Canvas &canvas) {
     SDL_Log("x_angle: %f\ty_angle: %f\tdistance: %f", x_angle, y_angle, distance);
 
     // 清除颜色缓冲和深度缓冲
-    canvas.clear(0xFF88C9FF, 0.0f);
+    canvas.clear(0xFF88C9FF, 2.0f);
 
     // canvas.drawLine(10, 10, 100, 100, canvas.getForeColor());
 
@@ -100,12 +100,20 @@ void MyWindow::onUpdate(Canvas &canvas) {
     Matrix::transformTranslate(mt, 0.0f, 0.0f, distance);
     Matrix::transformRotate(mr_x, 1.0f, 0.0f, 0.0f, x_angle);
     Matrix::transformRotate(mr_y, 0.0f, 1.0f, 0.0f, y_angle);
+    //
+    Matrix ms{};
+    Matrix::transformScale(ms, 0.25f, 0.25f, 0.25f);
+    Matrix::mulMM(mr_x, mr_x, ms);
+    //
     Matrix::mulMM(mr_yx, mr_y, mr_x);
     Matrix::mulMM(m, mt, mr_yx); // TODO 变换顺序问题
     Matrix mvp{}, vm{}, v{}, p{};
     Matrix::transformLookAt(v, Vector{0.0f, 0.0f, 0.0f}, Vector{0.0f, 0.0f, -1.0f}, Vector{0.0f, 1.0f, 0.0f});
     float ratio = static_cast<float>(canvas.getWidth()) / static_cast<float>(canvas.getHeight());
-    Matrix::transformPerspective(p, -ratio, ratio, -1.0f, 1.0f, 0.1f, 1000.0f);
+    //float near_k = 1.0f;
+    //Matrix::transformOrthographic(p, -ratio * near_k, ratio * near_k, -1.0f * near_k, 1.0f * near_k, 0.1f, 1000.0f);
+    float near_k = 0.1f;
+    Matrix::transformPerspective(p, -ratio * near_k, ratio * near_k, -1.0f * near_k, 1.0f * near_k, 0.1f, 1000.0f);
     Matrix::mulMM(vm, v, m);
     Matrix::mulMM(mvp, p, vm);
     // MVP * Pos -> Homo Pos

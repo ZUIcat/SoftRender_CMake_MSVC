@@ -73,7 +73,7 @@ void Vector::normalize(Vector &v) {
 uint8_t Vector::checkInCVV(const Vector &v) {
     uint8_t check = 0;
     float w = v.w;
-    if (v.x < -w) check |= 0b00000001;
+    if (v.x < -w) check |= 0b00000001; // TODO < or <=
     if (v.x >  w) check |= 0b00000010;
     if (v.y < -w) check |= 0b00000100;
     if (v.y >  w) check |= 0b00001000;

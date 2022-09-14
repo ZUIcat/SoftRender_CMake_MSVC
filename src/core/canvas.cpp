@@ -80,10 +80,11 @@ void Canvas::drawScanLine(const ScanLine &scanLine) {
     ShaderVFData v = scanLine.svfd;
     for (; line_witdh_now > 0; line_x_now++, line_witdh_now--) { // TODO 边界条件
         if (line_x_now >= 0 && line_x_now < canvas_width) {
-            float rhw = v.rhw; // 获取 1 / w（即 1 / -z）
-            if (rhw > thisDepthBuffer[line_x_now]) { // 深度测试
-                thisDepthBuffer[line_x_now] = rhw; // 更新深度缓存
-                float w = 1.0f / rhw; // 获取 w（即 -z）
+            // 获取深度值
+            float depth = v.pos.z;
+            if (depth < thisDepthBuffer[line_x_now]) { // 深度测试
+                thisDepthBuffer[line_x_now] = depth;   // 更新深度缓存
+                float w = 1.0f / v.rhw;
                 // 颜色插值模式
                 if (static_cast<int>(renderState) & static_cast<int>(RenderState::COLOR)) {
                     int real_r = Math::clamp(static_cast<int>(v.color.r * w * 255), 0, 255);
