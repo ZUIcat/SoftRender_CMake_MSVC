@@ -116,7 +116,10 @@ void Canvas::drawTrapezoid(const Trapezoid &trapezoid) {
 
     for (int i = top; i < bottom; i++) { // TODO 边界条件
         if (i >= 0 && i < canvas_height) {
+            // 光栅化，得到扫描线
             Trapezoid::getScanLine(s, t, i);
+            // 绘制扫描线
+            // TODO 在这个方法之前，或者在这个方法之中可以加入 frag shader 阶段
             drawScanLine(s);
         }
         //else {
@@ -155,12 +158,14 @@ void Canvas::drawPrimitives(const ShaderVFData *const svfd_p, size_t svdf_len, c
             ShaderVFData sdvf_1{svfd_p[svfd_index_1]};
             ShaderVFData sdvf_2{svfd_p[svfd_index_2]};
             ShaderVFData sdvf_3{svfd_p[svfd_index_3]};
+            // 这里是在画三角形的时候裁剪的，当三角形每个顶点都符合才通过，然后再 /w
             if (Vector::checkInCVV(sdvf_1.pos) == 0 &&
                 Vector::checkInCVV(sdvf_2.pos) == 0 &&
                 Vector::checkInCVV(sdvf_3.pos) == 0) {
                 ShaderVFData::homoToScreen(sdvf_1, width, height);
                 ShaderVFData::homoToScreen(sdvf_2, width, height);
                 ShaderVFData::homoToScreen(sdvf_3, width, height);
+                // TODO 其实也可以在光栅化的时候裁剪，考虑加上 Guard-band 算法
                 drawPrimitive(sdvf_1, sdvf_2, sdvf_3);
             }
         }

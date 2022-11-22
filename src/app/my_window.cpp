@@ -118,8 +118,11 @@ void MyWindow::onUpdate(Canvas &canvas) {
     Matrix::mulMM(mvp, p, vm);
     // MVP * Pos -> Homo Pos
     ShaderVFData svfds[8];
+    // 遍历每一个顶点
+    // TODO 在这之中可以加入 vert shader
     for (int i = 0; i < 8; i++) {
         Point tempP{};
+        // 这一步模型 * MVP
         Matrix::mulMV(tempP, mvp, point[i]);
         svfds[i] = ShaderVFData {
             tempP,
