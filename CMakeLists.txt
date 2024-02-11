@@ -31,11 +31,11 @@ add_executable(main
 
 target_include_directories(main PRIVATE
     "include"
-    "3rdParty/SDL2-2.24.0/include"
+    "3rdParty/SDL2-2.30.0/include"
 )
 target_link_directories(main PRIVATE
     "lib"
-    "3rdParty/SDL2-2.24.0/lib/x64"
+    "3rdParty/SDL2-2.30.0/lib/x64"
 )
 target_link_libraries(main PRIVATE
     SDL2
